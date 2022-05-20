@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+
+    "outDir": "dist",
+    "rootDir": "codigos",                                  /* Specify the root folder within your source files. */
+
+    "watch": true,
+  }
+}

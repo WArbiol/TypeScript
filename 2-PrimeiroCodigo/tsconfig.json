@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+      "outDir": "dist",
+      "watch": true,
+      "target": "ES6" 
+  }
+} //com isso já podemos fazer "npx tsc" apenas
+//npx tsc --init cria o arquivocom um monte de coisas para facilitar a configuração

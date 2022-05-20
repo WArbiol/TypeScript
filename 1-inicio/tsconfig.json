@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+      "outFile": "main.js",
+      "target": "ES6" //mudando de ES3 para ES6 que tem async
+                      //"ESNEXT" é a versão mais atual possivel do javascript
+  }
+} //com isso já podemos fazer "npx tsc" apenas
+//npx tsc --init cria o arquivocom um monte de coisas para facilitar a configuração
