@@ -8,44 +8,89 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const axios_1 = __importDefault(require("axios"));
-//interface User{
-//
-//}
-//let user: User[] 
-function take_informations() {
+let users = [];
+function take_informations(name) {
     return __awaiter(this, void 0, void 0, function* () {
-        //let name = prompt("Qual o username do usuário do GitHub que deseja procurar?")
-        let name = "warbiol";
         try {
-            const res = yield axios_1.default.get(`https://api.github.com/users/${name}`);
-            const data = res.data;
-            console.log(`O usuário ${name} criou a conta em ${data.created_at} e atualizou por último em ${data.updated_at}`);
+            let res = yield fetch(`https://api.github.com/users/${name}`);
+            let data = yield res.json();
+            let resrep = yield fetch(`https://api.github.com/users/${name}/repos`);
+            let datarep = yield resrep.json();
+            let new_user = {
+                name: name,
+                created_at: data.created_at,
+                updated_at: data.updated_at,
+                n_repos: Object.keys(datarep).length,
+                repos: []
+            };
+            for (let i = 0; i < new_user.n_repos; i++) {
+                let new_repo = {
+                    name: datarep[i].name,
+                    description: datarep[i].description,
+                    fork: datarep[i].fork
+                };
+                new_user.repos.push(new_repo);
+            }
+            users.push(new_user);
+            alert("Usuário cadastrado com sucesso.");
         }
         catch (err) {
-            console.log("Nome inválido!");
+            alert("Nome inválido!");
+            console.log(err);
         }
     });
 }
-function take_repos(name) {
+function ask() {
+    while (true) {
+        let resp = prompt("Deseja adiconar um usuario?\n1-Sim\n2-Não");
+        switch (resp) {
+            case '1':
+                return true;
+            case '2':
+                return false;
+            default:
+                alert('Responda "1" ou "2"!');
+        }
+    }
+}
+function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const res = yield axios_1.default.get(`https://api.github.com/users/${name}/repos`);
-            let data = res.data;
-            const n_repos = Object.keys(res.data).length;
-            console.log(`O usuário ${name} tem ${n_repos} repositórios:`);
-            for (let i = 0; i < n_repos; i++) {
-                console.log(`  ${i + 1}-${data[i].name}`);
+        while (true) {
+            let wish = ask();
+            if (wish) {
+                let username_correct;
+                while (true) {
+                    let username = prompt("Qual o nome do usuario?");
+                    if (typeof username === 'string') {
+                        username_correct = username;
+                        break;
+                    }
+                }
+                yield take_informations(username_correct);
+            }
+            else {
+                let text = "Usuários: \n";
+                users.forEach(user => {
+                    text += `  ${user.name}:\n`;
+                    text += `    Criado em ${user.created_at}\n`;
+                    text += `    Última atualização em ${user.updated_at}\n`;
+                    text += `    Número de repositórios: ${user.n_repos}\n`;
+                    text += `    Repositórios:\n`;
+                    user.repos.forEach(repo => {
+                        text += `      Nome: ${repo.name}\n`;
+                        text += `        Descrição: ${repo.description}\n`;
+                        if (repo.fork) {
+                            text += `        É um fork\n\n`;
+                        }
+                        else {
+                            text += `        Não é um fork\n\n`;
+                        }
+                    });
+                });
+                alert(text);
+                break;
             }
         }
-        catch (err) {
-            console.log("Nome inválido!");
-        }
     });
 }
-take_repos('warbiol');
-take_informations();
+main();
